@@ -1,0 +1,7 @@
+node_modules
+clips/*
+.env
+messages.json
+credentials.json
+memories/*
+src/profiles/*
