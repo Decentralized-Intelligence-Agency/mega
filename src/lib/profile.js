@@ -6,7 +6,6 @@ const { prompts: memories } = require("../prompts/memories");
 
 const { profile: chadProfile } = require("../profiles/chad");
 const { profile: omegaProfile } = require("../profiles/omega");
-const { profile: shikhaProfile } = require("../profiles/shikha");
 const { profile: nateProfile } = require("../profiles/nate");
 const { profile: andyProfile } = require("../profiles/andy");
 const { profile: lisaProfile } = require("../profiles/lisa");
@@ -18,7 +17,6 @@ const { profile: cittaProfile } = require("../profiles/citta");
 const profiles = [
   chadProfile,
   omegaProfile,
-  shikhaProfile,
   nateProfile,
   // andyProfile,
   lisaProfile,
@@ -38,7 +36,6 @@ const findProfile = (text) => {
   //todo loop over profiles to make this array
   const bots = [
     "Omega",
-    "Shikha",
     "Nate",
     "Chad",
     // "Andy",

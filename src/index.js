@@ -32,7 +32,7 @@ setInterval(() => {
   } else {
     state.processing = false;
   }
-}, 80000);
+}, 45000);
 
 // Load profile
 const { profile } = require("./profiles/omega");
@@ -82,7 +82,9 @@ const validateTranscription = (text) => {
   return true;
 };
 
-const messageStack = JSON.parse(fs.readFileSync("../messages.json", "utf8"));
+const messageStack = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../messages.json"), "utf8")
+);
 
 const start = async () => {
   if (state.speaking) {
@@ -103,7 +105,6 @@ const start = async () => {
     // Figure out which bot personality should reply
     const profile = findProfile(transcript);
     const botName = profile.name;
-    const defaultPrompt = profile.prompt(NAME, botName);
 
     try {
       messageStack.push(`${NAME}: ${transcript}`.trim());
@@ -121,7 +122,10 @@ const start = async () => {
     let memoriesStack = [];
     try {
       memoryStack = JSON.parse(
-        fs.readFileSync(`../memories/${botName.toLowerCase()}.json`, "utf8")
+        fs.readFileSync(
+          path.join(__dirname, `../memories/${botName.toLowerCase()}.json`),
+          "utf8"
+        )
       );
     } catch (memoryErr) {
       console.log("====== NO MEMORIES YET FOR ======", botName, memoryErr);
@@ -134,23 +138,25 @@ const start = async () => {
     memoryStack.forEach((m) => {
       memoriesStack.push(`- ${m}\n`);
     });
+    memoriesStack.push(`\n\n`);
+
+    const defaultPrompt = profile.prompt(
+      NAME,
+      botName,
+      memoriesStack.join("\n")
+    );
 
     // This stack of messages gets appended to the selected bot personality
     const promptStack = [
-      ...memoriesStack,
       ...messageStack.slice(
-        Math.max(memoryStack.length - config.gpt3.maxMessages, 0)
+        Math.max(messageStack.length - config.gpt3.maxMessages, 0)
       ),
     ];
 
     // This prompts gpt3 to make a reply
     promptStack.push(`${botName}:`);
 
-    const prompt =
-      defaultPrompt +
-      promptStack
-        .slice(Math.max(messageStack.length - config.gpt3.maxMessages, 0))
-        .join("\n");
+    const prompt = defaultPrompt + promptStack.join("\n");
 
     console.log("=== GPT3 PROMPT ===");
     console.log(prompt);
@@ -165,7 +171,7 @@ const start = async () => {
         console.log(responseText);
         console.log("=== GPT3 RESPONSE ===");
 
-        //    Auto correct barriers
+        // Auto correct barriers
         if (responseText === "") {
           return true;
         }
@@ -179,7 +185,7 @@ const start = async () => {
 
         // We log messages so the bot stop and start without losing context
         fs.writeFileSync(
-          "../messages.json",
+          path.join(__dirname, "../messages.json"),
           JSON.stringify(messageStack, undefined, 4),
           "utf8"
         );
@@ -211,11 +217,14 @@ const start = async () => {
             if (responseText.length > 140) {
               request.audioConfig.speakingRate = 1.1;
             }
+            if (responseText.length > 340) {
+              request.audioConfig.speakingRate = 1.3;
+            }
             const [newresponse] = await newclient.synthesizeSpeech(request);
             const writeFile = await util.promisify(fs.writeFile);
             const uid = await uidgen.generate();
             await writeFile(
-              `../clips/${uid}.mp3`,
+              path.join(__dirname, `../clips/${uid}.mp3`),
               newresponse.audioContent,
               "binary"
             );
@@ -225,9 +234,8 @@ const start = async () => {
             // return true;
             player.play(outputPath, async function (err) {
               await sleep(500);
-              console.log("sound played", err);
+              console.log("Sound played", err);
               delete state.client;
-              console.log("deleted client", state.client);
               // todo - this is terrible code. instantiate the client only once in the future
               const aclient = new wsrn({
                 chromePath:
