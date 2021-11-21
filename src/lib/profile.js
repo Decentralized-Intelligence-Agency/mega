@@ -4,31 +4,30 @@ const path = require("path");
 const { gpt3 } = require("./gpt3");
 const { prompts: memories } = require("../prompts/memories");
 
-const { profile: chadProfile } = require("../profiles/chad");
+const { profile: bradProfile } = require("../profiles/brad");
 const { profile: omegaProfile } = require("../profiles/omega");
-const { profile: nateProfile } = require("../profiles/nate");
-const { profile: andyProfile } = require("../profiles/andy");
 const { profile: lisaProfile } = require("../profiles/lisa");
-const { profile: fadeProfile } = require("../profiles/fade");
-const { profile: katrinaProfile } = require("../profiles/katrina");
-const { profile: avaniProfile } = require("../profiles/avani");
-const { profile: cittaProfile } = require("../profiles/citta");
+const { profile: confuciusProfile } = require("../profiles/confucius");
+const { profile: sueProfile } = require("../profiles/sue");
+const { profile: jackProfile } = require("../profiles/jack");
+const { profile: carlProfile } = require("../profiles/carl");
+
+
 // TODO - make this less shit (loading of profiles)
 const profiles = [
-  chadProfile,
+  bradProfile,
   omegaProfile,
-  nateProfile,
-  // andyProfile,
   lisaProfile,
-  fadeProfile,
-  katrinaProfile,
-  avaniProfile,
-  cittaProfile,
+  jackProfile,
+  confuciusProfile,
+  sueProfile,
+  carlProfile,
+
 ];
-let lastProfile = omegaProfile;
+let lastProfile = lisaProfile;
 
 // use config
-const MAX_MEMORIES = 4;
+const MAX_MEMORIES = 5;
 
 const findProfile = (text) => {
   console.log("=== FIND PROFILE ===");
@@ -36,14 +35,12 @@ const findProfile = (text) => {
   //todo loop over profiles to make this array
   const bots = [
     "Omega",
-    "Nate",
-    "Chad",
-    // "Andy",
+    "Brad",
+    "Jack",
     "Lisa",
-    "Fade",
-    "Katrina",
-    "Avani",
-    "Citta",
+    "Sue",
+    "Confucius",
+    "Carl",
   ];
   // const profileMatch = bots[Math.floor(Math.random() * bots.length)]; // default
   let selectedProfile = lastProfile;
