@@ -28,6 +28,9 @@ https://vb-audio.com/Cable/
 Clubdeck
 https://www.clubdeck.app/
 
+M Player
+https://mplayer.en.softonic.com/
+
 Todo:
 
 - [ ] Speech time
